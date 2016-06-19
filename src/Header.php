@@ -9,16 +9,6 @@ class Header implements HeaderInterface
         set as private setBag;
     }
 
-    public function has($key)
-    {
-        return $this->hasBag(strtolower($key));
-    }
-
-    public function set($key, $value)
-    {
-        $this->setBag(strtolower($key), is_array($value) ? $value : [$value]);
-    }
-
     /**
      * @inheritDoc
      */
@@ -26,6 +16,16 @@ class Header implements HeaderInterface
     {
         $normalized = strtolower($key);
         $this->set($normalized, $this->get($normalized, []) + (is_array($value) ? $value : [$value]));
+    }
+
+    public function set($key, $value)
+    {
+        $this->setBag(strtolower($key), is_array($value) ? $value : [$value]);
+    }
+
+    public function has($key)
+    {
+        return $this->hasBag(strtolower($key));
     }
 
     /**
@@ -40,6 +40,4 @@ class Header implements HeaderInterface
 
         return $lines;
     }
-
-
 }
