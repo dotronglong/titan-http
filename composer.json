@@ -27,12 +27,6 @@
             "dev-master": "1.0-dev"
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/dotronglong/titan-common"
-        }
-    ],
     "require": {
         "php": ">=5.5.9",
         "dotronglong/titan-common": "dev-master"
