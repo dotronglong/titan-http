@@ -1,6 +1,12 @@
 <?php namespace Titan\Http;
 
-class Response implements ResponseInterface
+class Response extends Message implements ResponseInterface
 {
-
+    /**
+     * @inheritDoc
+     */
+    public function send()
+    {
+        // TODO: Implement send() method.
+    }
 }
