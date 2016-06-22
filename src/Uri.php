@@ -324,6 +324,14 @@ class Uri implements UriInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function __toString()
+    {
+        // TODO: Implement __toString() method.
+    }
+
+    /**
      * Is a given port non-standard for the current scheme?
      *
      * @param string $scheme

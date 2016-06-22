@@ -1,8 +1,12 @@
 <?php namespace Titan\Http;
 
+use Titan\Http\Request\Cookie;
 use Titan\Http\Request\CookieInterface;
+use Titan\Http\Request\Files;
 use Titan\Http\Request\FilesInterface;
+use Titan\Http\Request\Form;
 use Titan\Http\Request\FormInterface;
+use Titan\Http\Request\Server;
 use Titan\Http\Request\ServerInterface;
 
 class Request extends Message implements RequestInterface
@@ -69,6 +73,21 @@ class Request extends Message implements RequestInterface
     }
 
     /**
+     * @return RequestInterface
+     */
+    public static function setUp()
+    {
+        $request = new self;
+        $request->setServer(new Server($_SERVER))
+            ->setUri(new Uri($request->getServer()->getRequestUri()))
+            ->setCookie(new Cookie())
+            ->setFiles(new Files())
+            ->setForm(new Form());
+
+        return $request;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getServer()
@@ -120,10 +139,5 @@ class Request extends Message implements RequestInterface
         $this->cookie = $cookie;
 
         return $this;
-    }
-
-    public static function setUp()
-    {
-
     }
 }

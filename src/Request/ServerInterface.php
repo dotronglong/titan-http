@@ -4,5 +4,8 @@ use Titan\Common\BagInterface;
 
 interface ServerInterface extends BagInterface
 {
-
+    /**
+     * @return string
+     */
+    public function getRequestUri();
 }
