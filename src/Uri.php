@@ -15,14 +15,6 @@ class Uri implements UriInterface
     const URI_FRAGMENT = 'fragment';
 
     /**
-     * @var array
-     */
-    private $supportedSchemes = [
-        self::SCHEME_HTTP  => 80,
-        self::SCHEME_HTTPS => 443,
-    ];
-
-    /**
      * @var string
      */
     protected $charUnreserved = 'a-zA-Z0-9_\-\.~';
@@ -77,6 +69,14 @@ class Uri implements UriInterface
      */
     protected $baseUrl = '';
 
+    /**
+     * @var array
+     */
+    private $supportedSchemes = [
+        self::SCHEME_HTTP  => 80,
+        self::SCHEME_HTTPS => 443,
+    ];
+
     public function __construct($options = [])
     {
         if (is_array($options)) {
@@ -84,45 +84,6 @@ class Uri implements UriInterface
         } elseif (is_string($options)) {
             $this->createUriFromUrl($options);
         }
-    }
-
-    private function createUriFromArray(array $parts)
-    {
-        if (isset($parts[static::URI_SCHEME])) {
-            $this->setScheme($parts[static::URI_SCHEME]);
-        }
-        if (isset($parts[static::URI_HOST])) {
-            $this->setHost($parts[static::URI_HOST]);
-        }
-        if (isset($parts[static::URI_PORT])) {
-            $this->setPort($parts[static::URI_PORT]);
-        }
-        if (isset($parts[static::URI_USER])) {
-            $user     = $parts[static::URI_USER];
-            $password = null;
-            if (isset($parts[static::URI_PASS])) {
-                $password = $parts[static::URI_PASS];
-            }
-            $this->setUserInfo($user, $password);
-        }
-        if (isset($parts[static::URI_PATH])) {
-            $this->setPath($parts[static::URI_PATH]);
-        }
-        if (isset($parts[static::URI_FRAGMENT])) {
-            $this->setFragment($parts[static::URI_FRAGMENT]);
-        }
-        if (isset($parts[static::URI_QUERY])) {
-            $this->setQuery(new Query($parts[static::URI_QUERY]));
-        }
-    }
-
-    private function createUriFromUrl($url)
-    {
-        if (($parts = parse_url($url)) === false) {
-            throw new \InvalidArgumentException("Unable to parse url: $url");
-        }
-
-        $this->createUriFromArray($parts);
     }
 
     /**
@@ -275,7 +236,7 @@ class Uri implements UriInterface
             return null;
         }
 
-        $port = (int) $port;
+        $port = (int)$port;
         if (1 > $port || 0xffff < $port) {
             throw new \InvalidArgumentException(
                 sprintf('Invalid port: %d. Must be between 1 and 65535', $port)
@@ -331,11 +292,50 @@ class Uri implements UriInterface
         // TODO: Implement __toString() method.
     }
 
+    private function createUriFromArray(array $parts)
+    {
+        if (isset($parts[static::URI_SCHEME])) {
+            $this->setScheme($parts[static::URI_SCHEME]);
+        }
+        if (isset($parts[static::URI_HOST])) {
+            $this->setHost($parts[static::URI_HOST]);
+        }
+        if (isset($parts[static::URI_PORT])) {
+            $this->setPort($parts[static::URI_PORT]);
+        }
+        if (isset($parts[static::URI_USER])) {
+            $user     = $parts[static::URI_USER];
+            $password = null;
+            if (isset($parts[static::URI_PASS])) {
+                $password = $parts[static::URI_PASS];
+            }
+            $this->setUserInfo($user, $password);
+        }
+        if (isset($parts[static::URI_PATH])) {
+            $this->setPath($parts[static::URI_PATH]);
+        }
+        if (isset($parts[static::URI_FRAGMENT])) {
+            $this->setFragment($parts[static::URI_FRAGMENT]);
+        }
+        if (isset($parts[static::URI_QUERY])) {
+            $this->setQuery(new Query($parts[static::URI_QUERY]));
+        }
+    }
+
+    private function createUriFromUrl($url)
+    {
+        if (($parts = parse_url($url)) === false) {
+            throw new \InvalidArgumentException("Unable to parse url: $url");
+        }
+
+        $this->createUriFromArray($parts);
+    }
+
     /**
      * Is a given port non-standard for the current scheme?
      *
      * @param string $scheme
-     * @param int $port
+     * @param int    $port
      *
      * @return bool
      */

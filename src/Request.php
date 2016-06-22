@@ -37,40 +37,9 @@ class Request extends Message implements RequestInterface
     private $files;
 
     /**
-     * @inheritDoc
+     * @var string
      */
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setUri(UriInterface $uri)
-    {
-        $this->uri = $uri;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setForm(FormInterface $form)
-    {
-        $this->form = $form;
-
-        return $this;
-    }
+    private $method = self::METHOD_GET;
 
     /**
      * @return RequestInterface
@@ -90,19 +59,9 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getServer()
+    public function getCookie()
     {
-        return $this->server;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setServer(ServerInterface $server)
-    {
-        $this->server = $server;
-
-        return $this;
+        return $this->cookie;
     }
 
     /**
@@ -111,6 +70,48 @@ class Request extends Message implements RequestInterface
     public function getFiles()
     {
         return $this->files;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getServer()
+    {
+        return $this->server;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCookie(CookieInterface $cookie)
+    {
+        $this->cookie = $cookie;
+
+        return $this;
     }
 
     /**
@@ -126,17 +127,39 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getCookie()
+    public function setForm(FormInterface $form)
     {
-        return $this->cookie;
+        $this->form = $form;
+
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function setCookie(CookieInterface $cookie)
+    public function setMethod($method)
     {
-        $this->cookie = $cookie;
+        $this->method = $method;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setServer(ServerInterface $server)
+    {
+        $this->server = $server;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setUri(UriInterface $uri)
+    {
+        $this->uri = $uri;
 
         return $this;
     }
