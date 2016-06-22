@@ -1,34 +1,29 @@
 <?php namespace Titan\Http;
 
 use Titan\Http\Request\FormInterface;
-use Titan\Http\Request\QueryInterface;
 
 class Request extends Message implements RequestInterface
 {
     /**
-     * @type QueryInterface
+     * @type UriInterface
      */
-    private $query;
+    private $uri;
 
     /**
      * @type FormInterface
      */
     private $form;
 
-    /**
-     * @inheritDoc
-     */
-    public function getQuery()
+    public function getUri()
     {
-        return $this->query;
+        return $this->uri;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setQuery(QueryInterface $query)
+    public function setUri(UriInterface $uri)
     {
-        $this->query = $query;
+        $this->uri = $uri;
+
+        return $this;
     }
 
     /**
@@ -45,5 +40,7 @@ class Request extends Message implements RequestInterface
     public function setForm(FormInterface $form)
     {
         $this->form = $form;
+
+        return $this;
     }
 }

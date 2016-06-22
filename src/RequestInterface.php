@@ -1,19 +1,19 @@
 <?php namespace Titan\Http;
 
 use Titan\Http\Request\FormInterface;
-use Titan\Http\Request\QueryInterface;
 
 interface RequestInterface extends MessageInterface
 {
     /**
-     * @return QueryInterface
+     * @return UriInterface
      */
-    public function getQuery();
+    public function getUri();
 
     /**
-     * @param QueryInterface $query
+     * @param UriInterface $uri
+     * @return self
      */
-    public function setQuery(QueryInterface $query);
+    public function setUri(UriInterface $uri);
 
     /**
      * @return FormInterface
@@ -22,6 +22,7 @@ interface RequestInterface extends MessageInterface
 
     /**
      * @param FormInterface $form
+     * @return self
      */
     public function setForm(FormInterface $form);
 }
