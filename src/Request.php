@@ -14,11 +14,17 @@ class Request extends Message implements RequestInterface
      */
     private $form;
 
+    /**
+     * @inheritDoc
+     */
     public function getUri()
     {
         return $this->uri;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setUri(UriInterface $uri)
     {
         $this->uri = $uri;
@@ -42,5 +48,10 @@ class Request extends Message implements RequestInterface
         $this->form = $form;
 
         return $this;
+    }
+
+    public static function setUp()
+    {
+
     }
 }
