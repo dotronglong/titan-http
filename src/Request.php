@@ -1,5 +1,8 @@
 <?php namespace Titan\Http;
 
+use Titan\Common\Stream;
+use Titan\Http\Request\Body;
+use Titan\Http\Request\BodyInterface;
 use Titan\Http\Request\Cookie;
 use Titan\Http\Request\CookieInterface;
 use Titan\Http\Request\Files;
@@ -12,19 +15,9 @@ use Titan\Http\Request\ServerInterface;
 class Request extends Message implements RequestInterface
 {
     /**
-     * @var UriInterface
+     * @var BodyInterface
      */
-    private $uri;
-
-    /**
-     * @var FormInterface
-     */
-    private $form;
-
-    /**
-     * @var ServerInterface
-     */
-    private $server;
+    private $body;
 
     /**
      * @var CookieInterface
@@ -37,23 +30,58 @@ class Request extends Message implements RequestInterface
     private $files;
 
     /**
+     * @var FormInterface
+     */
+    private $form;
+
+    /**
      * @var string
      */
     private $method = self::METHOD_GET;
+
+    /**
+     * @var ServerInterface
+     */
+    private $server;
+
+    /**
+     * @var UriInterface
+     */
+    private $uri;
 
     /**
      * @return RequestInterface
      */
     public static function setUp()
     {
+        $body = new Body();
+        $body->setStream(new Stream(Stream::PHP_INPUT));
+
         $request = new self;
         $request->setServer(new Server($_SERVER))
             ->setUri(new Uri($request->getServer()->getRequestUri()))
             ->setCookie(new Cookie())
             ->setFiles(new Files())
-            ->setForm(new Form());
+            ->setForm(new Form())
+            ->setBody($body);
 
         return $request;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBody(BodyInterface $body)
+    {
+        $this->body = $body;
     }
 
     /**
@@ -62,46 +90,6 @@ class Request extends Message implements RequestInterface
     public function getCookie()
     {
         return $this->cookie;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getFiles()
-    {
-        return $this->files;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getServer()
-    {
-        return $this->server;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getUri()
-    {
-        return $this->uri;
     }
 
     /**
@@ -117,11 +105,27 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setFiles(FilesInterface $files)
     {
         $this->files = $files;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getForm()
+    {
+        return $this->form;
     }
 
     /**
@@ -137,6 +141,14 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setMethod($method)
     {
         $this->method = $method;
@@ -147,11 +159,27 @@ class Request extends Message implements RequestInterface
     /**
      * @inheritDoc
      */
+    public function getServer()
+    {
+        return $this->server;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setServer(ServerInterface $server)
     {
         $this->server = $server;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUri()
+    {
+        return $this->uri;
     }
 
     /**

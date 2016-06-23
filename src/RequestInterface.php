@@ -1,5 +1,6 @@
 <?php namespace Titan\Http;
 
+use Titan\Http\Request\BodyInterface;
 use Titan\Http\Request\CookieInterface;
 use Titan\Http\Request\FilesInterface;
 use Titan\Http\Request\FormInterface;
@@ -84,4 +85,15 @@ interface RequestInterface extends MessageInterface
      * @return self
      */
     public function setMethod($method);
+
+    /**
+     * @return BodyInterface
+     */
+    public function getBody();
+
+    /**
+     * @param BodyInterface $body
+     * @return self
+     */
+    public function setBody(BodyInterface $body);
 }
