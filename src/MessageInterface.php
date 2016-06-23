@@ -2,10 +2,15 @@
 
 interface MessageInterface
 {
+    const CONTENT_TYPE_JSON = 'application/json';
+    const CONTENT_TYPE_HTML = 'text/html';
+    const CONTENT_TYPE_TEXT = 'text/plain';
+    const CONTENT_TYPE_XML  = 'text/xml';
+
     /**
      * Get instance of header
      *
-     * @return HeaderInterface
+     * @return HeadersInterface
      */
     public function getHeaders();
 
@@ -19,10 +24,10 @@ interface MessageInterface
     /**
      * Set instance of header
      *
-     * @param HeaderInterface $headers
+     * @param HeadersInterface $headers
      * @return self
      */
-    public function setHeaders(HeaderInterface $headers);
+    public function setHeaders(HeadersInterface $headers);
 
     /**
      * Set the HTTP protocol version

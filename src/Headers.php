@@ -1,13 +1,16 @@
 <?php namespace Titan\Http;
 
+use Titan\Common\Bag;
 use Titan\Common\BagTrait;
 
-class Header implements HeaderInterface
+class Headers extends Bag implements HeadersInterface
 {
     use BagTrait {
         has as private hasBag;
         set as private setBag;
     }
+
+    const CONTENT_TYPE = 'content-type';
 
     /**
      * @inheritDoc
@@ -35,9 +38,19 @@ class Header implements HeaderInterface
     {
         $lines = [];
         foreach ($this->data as $key => $value) {
-            $lines[] = $key . ': ' . join(', ', $value);
+            $lines[] = $key . ': ' . (is_array($value) ? join(', ', $value) : $value);
         }
 
         return $lines;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function flush()
+    {
+        foreach ($this->lines() as $line) {
+            header($line);
+        }
     }
 }

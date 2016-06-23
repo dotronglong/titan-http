@@ -8,7 +8,7 @@ class Message implements MessageInterface
     private $protocolVersion = '1.1';
 
     /**
-     * @type HeaderInterface
+     * @type HeadersInterface
      */
     private $headers;
 
@@ -31,7 +31,7 @@ class Message implements MessageInterface
     /**
      * @inheritDoc
      */
-    public function setHeaders(HeaderInterface $headers)
+    public function setHeaders(HeadersInterface $headers)
     {
         $this->headers = $headers;
     }

@@ -2,6 +2,7 @@
 
 use Titan\Http\Request\Query;
 use Titan\Http\Request\QueryInterface;
+use Titan\Http\Request\ServerInterface;
 
 class Uri implements UriInterface
 {
@@ -83,6 +84,8 @@ class Uri implements UriInterface
             $this->createUriFromArray($options);
         } elseif (is_string($options)) {
             $this->createUriFromUrl($options);
+        } elseif ($options instanceof ServerInterface) {
+            $this->createUriFromServer($options);
         }
     }
 
@@ -117,67 +120,19 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getFragment()
-    {
-        return $this->fragment;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getHost()
-    {
-        return $this->host;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getPort()
-    {
-        return $this->port;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getQuery()
-    {
-        return $this->query;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getScheme()
-    {
-        return $this->scheme;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getUserInfo()
-    {
-        return $this->userInfo;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function setBaseUrl($baseUrl)
     {
         $this->baseUrl = $baseUrl;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFragment()
+    {
+        return $this->fragment;
     }
 
     /**
@@ -201,6 +156,14 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setHost($host)
     {
         if (!is_string($host)) {
@@ -209,6 +172,14 @@ class Uri implements UriInterface
         $this->host = strtolower($host);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPath()
+    {
+        return $this->path;
     }
 
     /**
@@ -230,13 +201,21 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setPort($port)
     {
         if ($port === null) {
             return null;
         }
 
-        $port = (int)$port;
+        $port = (int) $port;
         if (1 > $port || 0xffff < $port) {
             throw new \InvalidArgumentException(
                 sprintf('Invalid port: %d. Must be between 1 and 65535', $port)
@@ -245,6 +224,14 @@ class Uri implements UriInterface
         $this->port = $this->isStandardPort($this->scheme, $port) ? $port : null;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getQuery()
+    {
+        return $this->query;
     }
 
     /**
@@ -260,6 +247,14 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setScheme($scheme = self::SCHEME_HTTP)
     {
         if (!is_string($scheme)) {
@@ -268,6 +263,14 @@ class Uri implements UriInterface
         $this->scheme = strtolower($scheme);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUserInfo()
+    {
+        return $this->userInfo;
     }
 
     /**
@@ -327,6 +330,17 @@ class Uri implements UriInterface
         if (($parts = parse_url($url)) === false) {
             throw new \InvalidArgumentException("Unable to parse url: $url");
         }
+
+        $this->createUriFromArray($parts);
+    }
+
+    private function createUriFromServer(ServerInterface $server)
+    {
+        $parts = [
+            static::URI_HOST  => $server->getServerName(),
+            static::URI_PATH  => $server->getRequestUri(),
+            static::URI_QUERY => $server->getQueryString(),
+        ];
 
         $this->createUriFromArray($parts);
     }

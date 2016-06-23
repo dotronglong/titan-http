@@ -1,13 +1,16 @@
-<?php namespace Titan\Http\Request;
+<?php
+namespace Titan\Http\Request;
 
 use Titan\Common\Content\ContentAwareTrait;
 use Titan\Common\Content\Parser\ParserAwareTrait;
 use Titan\Common\Exception\InvalidArgumentException;
-use Titan\Common\StreamAwareTrait;
+use Titan\Common\Stream\StreamAwareTrait;
 
 class Body implements BodyInterface
 {
-    use ContentAwareTrait, StreamAwareTrait, ParserAwareTrait;
+    use ContentAwareTrait, StreamAwareTrait, ParserAwareTrait {
+        getContent as private getStringContent;
+    }
 
     /**
      * @var string
@@ -19,22 +22,24 @@ class Body implements BodyInterface
      */
     public function __toString()
     {
-        $content = '';
-        if ($this->getStream() !== null) {
-            $content = $this->getStream();
-        } elseif ($this->getContent() !== null) {
-            $content = $this->getContent();
+         return $this->getContent();
+    }
+
+    public function getContent()
+    {
+        if ($this->content === null && $this->getStream() !== null) {
+            $this->setContent($this->getStream());
         }
 
-        return (string) $content;
+        return $this->getStringContent();
     }
 
     /**
      * @inheritDoc
      */
-    public function getParsedContent()
+    public function getParsedContent($cache = true)
     {
-        if ($this->parsedContent !== null) {
+        if ($this->parsedContent !== null && $cache) {
             return $this->parsedContent;
         }
 
@@ -42,7 +47,7 @@ class Body implements BodyInterface
             throw new InvalidArgumentException("There is no parsers available.");
         }
 
-        return $this->getParser()->parse($this->getContent());
+        return $this->getParser()->parse($this);
     }
 
     /**

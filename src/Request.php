@@ -1,5 +1,6 @@
 <?php namespace Titan\Http;
 
+use Titan\Common\Content\Parser\JsonParser;
 use Titan\Common\Stream;
 use Titan\Http\Request\Body;
 use Titan\Http\Request\BodyInterface;
@@ -49,6 +50,38 @@ class Request extends Message implements RequestInterface
      */
     private $uri;
 
+    public function __construct(
+        $method = self::METHOD_GET,
+        UriInterface $uri = null,
+        FormInterface $form = null,
+        ServerInterface $server = null,
+        FilesInterface $files = null,
+        BodyInterface $body = null,
+        CookieInterface $cookie = null
+    ) {
+        if ($method) {
+            $this->setMethod($method);
+        }
+        if ($uri) {
+            $this->setUri($uri);
+        }
+        if ($form) {
+            $this->setForm($form);
+        }
+        if ($server) {
+            $this->setServer($server);
+        }
+        if ($files) {
+            $this->setFiles($files);
+        }
+        if ($body) {
+            $this->setBody($body);
+        }
+        if ($cookie) {
+            $this->setCookie($cookie);
+        }
+    }
+
     /**
      * @return RequestInterface
      */
@@ -56,14 +89,17 @@ class Request extends Message implements RequestInterface
     {
         $body = new Body();
         $body->setStream(new Stream(Stream::PHP_INPUT));
+        $body->setParser(new JsonParser());
 
+        $server  = new Server($_SERVER);
         $request = new self;
-        $request->setServer(new Server($_SERVER))
-            ->setUri(new Uri($request->getServer()->getRequestUri()))
+        $request->setServer($server)
+            ->setUri(new Uri($server))
             ->setCookie(new Cookie())
             ->setFiles(new Files())
             ->setForm(new Form())
-            ->setBody($body);
+            ->setBody($body)
+            ->setMethod($server->getRequestMethod());
 
         return $request;
     }
@@ -82,6 +118,8 @@ class Request extends Message implements RequestInterface
     public function setBody(BodyInterface $body)
     {
         $this->body = $body;
+
+        return $this;
     }
 
     /**

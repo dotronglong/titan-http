@@ -2,7 +2,7 @@
 
 use Titan\Common\BagInterface;
 
-interface HeaderInterface extends BagInterface
+interface HeadersInterface extends BagInterface
 {
     /**
      * Append value(s) to a current header name.
@@ -22,4 +22,9 @@ interface HeaderInterface extends BagInterface
      * @return array
      */
     public function lines();
+
+    /**
+     * Flush and clean all headers
+     */
+    public function flush();
 }
