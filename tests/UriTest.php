@@ -20,4 +20,13 @@ class UriTest extends TestCase
         $this->assertEmpty($uri->getBaseUrl());
         $this->assertEquals('dotronglong:123456@github.com:80', $uri->getAuthority());
     }
+
+    public function testBaseUrlAndPath()
+    {
+        $uri = new Uri();
+        $uri->setBaseUrl('/folder/');
+        $uri->setPath('/folder/my-path');
+        $this->assertEquals('/my-path', $uri->getPath());
+        $this->assertEquals('/folder', $uri->getBaseUrl());
+    }
 }
