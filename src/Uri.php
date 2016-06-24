@@ -122,6 +122,9 @@ class Uri implements UriInterface
      */
     public function setBaseUrl($baseUrl)
     {
+        if (strrpos($baseUrl, '/') === strlen($baseUrl) - 1) {
+            $baseUrl = substr($baseUrl, 0, strlen($baseUrl) - 1);
+        }
         $this->baseUrl = $baseUrl;
 
         return $this;
@@ -196,6 +199,10 @@ class Uri implements UriInterface
             [$this, 'rawUrlEncodeMatchZero'],
             $path
         );
+
+        if (!empty($this->baseUrl) && strpos($this->path, $this->baseUrl) === 0) {
+            $this->path = substr($this->path, strlen($this->baseUrl));
+        }
     }
 
     /**
