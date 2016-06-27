@@ -1,19 +1,28 @@
 <?php namespace Titan\Tests\Http\Routing\Route;
 
+use Titan\Http\Uri;
 use Titan\Tests\Common\TestCase;
 use Titan\Http\Routing\Route\RegexRoute;
 
 class RegexRouteTest extends TestCase
 {
-    public function testReplaceTags()
+    public function testMatch()
     {
-        $route = new RegexRoute();
-        $string = '{lang}.domain.com.{country}';
-        $tags = [
+        $host = '{lang}.domain.com.{country}';
+        $path = '/account/{id}';
+        $demands = [
             'lang' => '\w+',
-            'country' => '[a-z]{2}'
+            'country' => '[a-z]{2}',
+            'id' => '\d+'
         ];
-        $expected = "({$tags['lang']}).domain.com.({$tags['country']})";
-        $this->assertEquals($expected, $this->invokeMethod($route, 'replaceTags', [$string, $tags]));
+        $route = new RegexRoute('sample', $host, $path, ['GET', 'POST'], $demands);
+        $uri = new Uri();
+        $uri->setHost('en.domain.com.vi')
+            ->setPath('/account/1988');
+        $route->match($uri);
+        $this->assertEquals([
+            'host' => ['lang' => 'en', 'country' => 'vi'],
+            'path' => ['id' => 1988]
+        ], $this->invokeProperty($route, 'arguments'));
     }
 }

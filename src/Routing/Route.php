@@ -7,37 +7,37 @@ abstract class Route implements RouteInterface
     /**
      * @var string
      */
-    private $type;
+    protected $type;
 
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
      */
-    private $host;
+    protected $host;
 
     /**
      * @var string
      */
-    private $path;
+    protected $path;
 
     /**
      * @var array
      */
-    private $methods = [];
+    protected $methods = [];
 
     /**
      * @var array
      */
-    private $demands = [];
+    protected $demands = [];
 
     /**
      * @var array
      */
-    private $matches = [];
+    protected $matches = [];
 
     public function __construct(
         $name = null,
@@ -104,8 +104,8 @@ abstract class Route implements RouteInterface
      */
     public function setHost($host)
     {
-        if (!is_string($host)) {
-            throw new InvalidArgumentException('Host of route must be a string.');
+        if ($host !== null && !is_string($host) || empty($host)) {
+            throw new InvalidArgumentException('Host of route must be a string or null.');
         }
         $this->host = $host;
 
@@ -125,8 +125,8 @@ abstract class Route implements RouteInterface
      */
     public function setPath($path)
     {
-        if (!is_string($path)) {
-            throw new InvalidArgumentException('Path of route must be a string.');
+        if ($path !== null && !is_string($path) || empty($path)) {
+            throw new InvalidArgumentException('Path of route must be a string or null.');
         }
         $this->path = $path;
 
