@@ -43,21 +43,24 @@ class RegexRoute extends Route
 
     protected function setUpArguments($subject, array $demands, &$arguments)
     {
-        $pattern = "/\\{$this->openingTag}\w+\\{$this->closingTag}/i";
-        $openingTagLength = strlen($this->openingTag);
-        $closingTagLength = strlen($this->closingTag);
+        $o = $this->openingTag;
+        $c = $this->closingTag;
+        $pattern = "/\\$o(\w+)\\$c/i";
 
-        return preg_replace_callback($pattern,
-            function ($matches) use ($openingTagLength, $closingTagLength, $demands, &$arguments) {
-                $match = substr($matches[0], $openingTagLength, strlen($matches[0]) - $closingTagLength - 1);
-
+        if (preg_match_all($pattern, $subject, $matches)) {
+            $replacements = [];
+            foreach ($matches[1] as $i => $match) {
                 $arguments[$match] = null;
-                if (array_key_exists($match, $demands)) {
-                    return "({$demands[$match]})";
-                } else {
-                    return "({$this->defaultReplacement})";
+                $replacement = $this->defaultReplacement;
+                if (isset($demands[$match])) {
+                    $replacement = $demands[$match];
                 }
-            }, $subject);
+                $replacements[$matches[0][$i]] = "($replacement)";
+            }
+            $subject = str_replace(array_keys($replacements), array_values($replacements), $subject);
+        }
+
+        return $subject;
     }
 
     private function setUpHostArguments()
@@ -108,11 +111,8 @@ class RegexRoute extends Route
 
     public function match(UriInterface $uri)
     {
-        if (count($this->demands)) {
-            $this->setUpHostArguments();
-            $this->setUpPathArguments();
-        }
-
+        $this->setUpHostArguments();
+        $this->setUpPathArguments();
         if ($this->matchHostArguments($uri->getHost()) && $this->matchPathArguments($uri->getPath())) {
             return true;
         }

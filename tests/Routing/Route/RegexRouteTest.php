@@ -25,4 +25,30 @@ class RegexRouteTest extends TestCase
             'path' => ['id' => 1988]
         ], $this->invokeProperty($route, 'arguments'));
     }
+
+    public function testMatchWithoutDemands()
+    {
+        $host = '{lang}.domain.com.{country}';
+        $path = '/account/{id}';
+        $route = new RegexRoute('sample', $host, $path, ['GET', 'POST']);
+        $uri = new Uri();
+        $uri->setHost('en.domain.com.vi')
+            ->setPath('/account/1988');
+        $this->assertTrue($route->match($uri));
+        $this->assertEquals([
+            'host' => ['lang' => 'en', 'country' => 'vi'],
+            'path' => ['id' => 1988]
+        ], $this->invokeProperty($route, 'arguments'));
+    }
+
+    public function testMatchInvalidString()
+    {
+        $host = '{lang}.domain.com.{country}';
+        $path = '/account/{id}';
+        $route = new RegexRoute('sample', $host, $path, ['GET', 'POST'], ['country' => 'us|jp']);
+        $uri = new Uri();
+        $uri->setHost('en.domain.com.vi')
+            ->setPath('/account/1988');
+        $this->assertFalse($route->match($uri));
+    }
 }
