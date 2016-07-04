@@ -104,7 +104,7 @@ abstract class Route implements RouteInterface
      */
     public function setHost($host)
     {
-        if ($host !== null && !is_string($host) || empty($host)) {
+        if ($host !== null && !is_string($host)) {
             throw new InvalidArgumentException('Host of route must be a string or null.');
         }
         $this->host = $host;
@@ -125,7 +125,7 @@ abstract class Route implements RouteInterface
      */
     public function setPath($path)
     {
-        if ($path !== null && !is_string($path) || empty($path)) {
+        if ($path !== null && !is_string($path)) {
             throw new InvalidArgumentException('Path of route must be a string or null.');
         }
         $this->path = $path;
