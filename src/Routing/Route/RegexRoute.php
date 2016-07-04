@@ -33,9 +33,17 @@ class RegexRoute extends Route
         self::ROUTE_PATH => []
     ];
 
+    /**
+     * @var array
+     */
+    protected $patterns = [
+        self::ROUTE_HOST => '',
+        self::ROUTE_PATH => ''
+    ];
+
     protected function setUpArguments($subject, array $demands, &$arguments)
     {
-        $pattern          = "/\\{$this->openingTag}\w+\\{$this->closingTag}/i";
+        $pattern = "/\\{$this->openingTag}\w+\\{$this->closingTag}/i";
         $openingTagLength = strlen($this->openingTag);
         $closingTagLength = strlen($this->closingTag);
 
@@ -55,30 +63,47 @@ class RegexRoute extends Route
     private function setUpHostArguments()
     {
         if ($this->host) {
-            $this->setHost($this->setUpArguments($this->host, $this->demands, $this->arguments[static::ROUTE_HOST]));
+            $pattern = $this->setUpArguments($this->host, $this->demands, $this->arguments[static::ROUTE_HOST]);
+            $this->patterns[static::ROUTE_HOST] = $this->cleanUpPattern($pattern);
         }
     }
 
     private function setUpPathArguments()
     {
         if ($this->path) {
-            $this->setPath($this->setUpArguments($this->path, $this->demands, $this->arguments[static::ROUTE_PATH]));
+            $pattern = $this->setUpArguments($this->path, $this->demands, $this->arguments[static::ROUTE_PATH]);
+            $this->patterns[static::ROUTE_PATH] = $this->cleanUpPattern($pattern);
         }
     }
 
-    protected function matchArguments($pattern, $subject, array $arguments)
+    protected function cleanUpPattern($pattern)
     {
-
+        return str_replace(['/'], ['\/'], $pattern);
     }
 
-    private function matchHostArguments()
+    protected function matchArguments($pattern, $subject, array &$arguments)
     {
+        if (preg_match("/$pattern/i", $subject, $matches)) {
+            $i = 1;
+            foreach ($arguments as $name => $value) {
+                $arguments[$name] = isset($matches[$i]) ? $matches[$i] : null;
+                $i++;
+            }
 
+            return true;
+        }
+
+        return false;
     }
 
-    private function matchPathArguments()
+    private function matchHostArguments($host)
     {
+        return $this->matchArguments($this->patterns[static::ROUTE_HOST], $host, $this->arguments[static::ROUTE_HOST]);
+    }
 
+    private function matchPathArguments($path)
+    {
+        return $this->matchArguments($this->patterns[static::ROUTE_PATH], $path, $this->arguments[static::ROUTE_PATH]);
     }
 
     public function match(UriInterface $uri)
@@ -88,7 +113,7 @@ class RegexRoute extends Route
             $this->setUpPathArguments();
         }
 
-        if ($this->matchHostArguments() && $this->matchPathArguments()) {
+        if ($this->matchHostArguments($uri->getHost()) && $this->matchPathArguments($uri->getPath())) {
             return true;
         }
 

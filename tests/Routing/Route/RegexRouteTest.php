@@ -19,7 +19,7 @@ class RegexRouteTest extends TestCase
         $uri = new Uri();
         $uri->setHost('en.domain.com.vi')
             ->setPath('/account/1988');
-        $route->match($uri);
+        $this->assertTrue($route->match($uri));
         $this->assertEquals([
             'host' => ['lang' => 'en', 'country' => 'vi'],
             'path' => ['id' => 1988]
