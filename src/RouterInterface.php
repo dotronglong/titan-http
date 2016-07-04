@@ -8,7 +8,7 @@ interface RouterInterface
      * Route a specified request and return appropriate route instance
      *
      * @param RequestInterface $request
-     * @return RouteInterface
+     * @return RouteInterface|null
      */
     public function route(RequestInterface $request);
 
@@ -36,10 +36,25 @@ interface RouterInterface
     public function addRoute(RouteInterface $route);
 
     /**
+     * Get a route by name
+     *
+     * @param string $name
+     * @return RouteInterface
+     */
+    public function getRoute($name);
+
+    /**
      * Remove a route by name
      *
      * @param string $name
      * @return self
      */
     public function removeRoute($name);
+
+    /**
+     * Remove all routes in router
+     *
+     * @return self
+     */
+    public function removeRoutes();
 }
