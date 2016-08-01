@@ -1,5 +1,6 @@
 <?php namespace Titan\Http;
 
+use Titan\Common\Str;
 use Titan\Common\Bag;
 use Titan\Common\BagTrait;
 
@@ -8,8 +9,8 @@ class Headers extends Bag implements HeadersInterface
     use BagTrait {
         has as private hasBag;
         set as private setBag;
+        get as private getBag;
     }
-
     const CONTENT_TYPE = 'content-type';
 
     /**
@@ -18,7 +19,17 @@ class Headers extends Bag implements HeadersInterface
     public function append($key, $value)
     {
         $normalized = strtolower($key);
-        $this->set($normalized, $this->get($normalized, []) + (is_array($value) ? $value : [$value]));
+        $oldValues  = $this->getBag($normalized, []);
+        $newValues  = is_array($value) ? $value : [$value];
+
+        $this->setBag($normalized, array_merge($oldValues, $newValues));
+    }
+
+    public function get($key, $default = null)
+    {
+        $normalized = strtolower($key);
+
+        return $this->hasBag($normalized) ? $this->getBag($normalized) : $default;
     }
 
     public function set($key, $value)
@@ -38,7 +49,7 @@ class Headers extends Bag implements HeadersInterface
     {
         $lines = [];
         foreach ($this->data as $key => $value) {
-            $lines[] = $key . ': ' . (is_array($value) ? join(', ', $value) : $value);
+            $lines[] = Str::upperCaseFirst($key, '-') . ': ' . (is_array($value) ? join(', ', $value) : $value);
         }
 
         return $lines;
@@ -52,5 +63,7 @@ class Headers extends Bag implements HeadersInterface
         foreach ($this->lines() as $line) {
             header($line);
         }
+
+        $this->clean();
     }
 }

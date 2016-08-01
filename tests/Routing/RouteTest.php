@@ -41,4 +41,52 @@ class RouteTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->assertEquals($route, $route->setHost([]));
     }
+
+    public function testGetSetPath()
+    {
+        $path  = '/my-path';
+        $route = $this->getInstance();
+        $this->assertEquals($route, $route->setPath($path));
+        $this->assertEquals($path, $route->getPath());
+    }
+
+    public function testSetPathExpectInvalidArgumentException()
+    {
+        $route = $this->getInstance();
+        $this->expectException(InvalidArgumentException::class);
+        $this->assertEquals($route, $route->setPath([]));
+    }
+
+    public function testGetSetMethods()
+    {
+        $methods = ['GET', 'PUT'];
+        $route = $this->getInstance();
+        $this->assertEquals($route, $route->setMethods($methods));
+        $this->assertEquals($methods, $route->getMethods());
+    }
+
+    public function testGetSetDemands()
+    {
+        $demands = ['id' => '\d+'];
+        $route = $this->getInstance();
+        $this->assertEquals($route, $route->setDemands($demands));
+        $this->assertEquals($demands, $route->getDemands());
+    }
+
+    public function testGetSetMatches()
+    {
+        $matches = ['id' => 1988];
+        $route = $this->getInstance();
+        $this->assertEquals($route, $route->setMatches($matches));
+        $this->assertEquals($matches, $route->getMatches());
+    }
+
+    public function testMatchMethod()
+    {
+        $route = $this->getInstance();
+        $route->setMethods(['POST', 'PUT']);
+        $this->assertTrue($this->invokeMethod($route, 'matchMethod', ['PUT']));
+        $this->assertTrue($this->invokeMethod($route, 'matchMethod', ['POST']));
+        $this->assertFalse($this->invokeMethod($route, 'matchMethod', ['GET']));
+    }
 }

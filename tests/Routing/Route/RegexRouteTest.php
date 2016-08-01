@@ -1,5 +1,6 @@
 <?php namespace Titan\Tests\Http\Routing\Route;
 
+use Titan\Http\Request;
 use Titan\Http\Uri;
 use Titan\Tests\Common\TestCase;
 use Titan\Http\Routing\Route\RegexRoute;
@@ -19,11 +20,15 @@ class RegexRouteTest extends TestCase
         $uri = new Uri();
         $uri->setHost('en.domain.com.vi')
             ->setPath('/account/1988');
-        $this->assertTrue($route->match($uri));
+        $request = new Request();
+        $request->setUri($uri);
+
+        $this->assertTrue($route->match($request));
         $this->assertEquals([
-            'host' => ['lang' => 'en', 'country' => 'vi'],
-            'path' => ['id' => 1988]
-        ], $this->invokeProperty($route, 'arguments'));
+            'lang' => 'en',
+            'country' => 'vi',
+            'id' => 1988
+        ], $this->invokeProperty($route, 'matches'));
     }
 
     public function testMatchWithoutDemands()
@@ -34,11 +39,15 @@ class RegexRouteTest extends TestCase
         $uri = new Uri();
         $uri->setHost('en.domain.com.vi')
             ->setPath('/account/1988');
-        $this->assertTrue($route->match($uri));
+        $request = new Request();
+        $request->setUri($uri);
+
+        $this->assertTrue($route->match($request));
         $this->assertEquals([
-            'host' => ['lang' => 'en', 'country' => 'vi'],
-            'path' => ['id' => 1988]
-        ], $this->invokeProperty($route, 'arguments'));
+            'lang' => 'en',
+            'country' => 'vi',
+            'id' => 1988
+        ], $this->invokeProperty($route, 'matches'));
     }
 
     public function testMatchInvalidString()
@@ -49,6 +58,9 @@ class RegexRouteTest extends TestCase
         $uri = new Uri();
         $uri->setHost('en.domain.com.vi')
             ->setPath('/account/1988');
-        $this->assertFalse($route->match($uri));
+        $request = new Request();
+        $request->setUri($uri);
+
+        $this->assertFalse($route->match($request));
     }
 }

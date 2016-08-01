@@ -1,7 +1,7 @@
 <?php namespace Titan\Http\Routing;
 
 use Titan\Http\Exception\InvalidArgumentException;
-use Titan\Http\UriInterface;
+use Titan\Http\RequestInterface;
 
 interface RouteInterface
 {
@@ -139,10 +139,11 @@ interface RouteInterface
      */
     public function setMatches(array $matches);
 
-    /*
-     * Returns whether this route matches uri or not
+    /**
+     * Returns whether this route matches request or not
      *
+     * @param RequestInterface $request
      * @return bool
      */
-    public function match(UriInterface $uri);
+    public function match(RequestInterface $request);
 }

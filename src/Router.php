@@ -15,7 +15,7 @@ class Router implements RouterInterface
     public function route(RequestInterface $request)
     {
         foreach ($this->routes as $route) {
-            if ($route->match($request->getUri())) {
+            if ($route->match($request)) {
                 return $route;
             }
         }

@@ -1,6 +1,7 @@
 <?php namespace Titan\Http\Routing;
 
 use Titan\Http\Exception\InvalidArgumentException;
+use Titan\Http\Request;
 
 abstract class Route implements RouteInterface
 {
@@ -185,5 +186,10 @@ abstract class Route implements RouteInterface
         $this->matches = $matches;
 
         return $this;
+    }
+
+    protected function matchMethod($method)
+    {
+        return in_array($method, $this->methods);
     }
 }
